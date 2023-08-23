@@ -1,29 +1,26 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ModalBackdrop, ModalContent } from './Modal.styled';
 
-export class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.onEscapeClose);
-  };
+export const Modal = ({ closeModal, currentImg }) => {
+  useEffect(() => {
+    const onEscClose = e => {
+      if (e.code !== 'Escape') {
+        return;
+      }
 
-  onEscapeClose = evt => {
-    if (evt.code !== 'Escape') {
-      return;
-    }
-    this.props.closeModal();
-  };
+      closeModal();
+    };
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.onEscapeClose);
-  };
+    window.addEventListener('keydown', onEscClose);
 
-  render() {
-    const { currentImg, closeModal } = this.props;
+    return () => window.removeEventListener('keydown', onEscClose);
+  }, [closeModal]);
+
     return (
       <ModalBackdrop
-        onClick={evt => {
-          if (evt.currentTarget === evt.target) {
+        onClick={e => {
+          if (e.currentTarget === e.target) {
             closeModal();
           }
         }}
@@ -33,7 +30,6 @@ export class Modal extends Component {
         </ModalContent>
       </ModalBackdrop>
     );
-  }
 };
 
 Modal.propTypes = {

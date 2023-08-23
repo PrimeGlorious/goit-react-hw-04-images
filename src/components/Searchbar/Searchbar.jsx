@@ -1,51 +1,44 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { SearchbarHeader, SearchForm, SearchButton, SearchButtonLabel, SearchInput } from './Searchbar.styled';
 
-class Searchbar extends Component {
-  state = {
-    inputValue: '',
+export const Searchbar = ({ onSubmit }) => {
+  const [inputValue, setInputValue] = useState('');
+
+  const onInputValue = e => {
+    const inputValue = e.target.value;
+    setInputValue(inputValue);
   };
 
-  onInputValue = evt => {
-    const inputValue = evt.target.value;
-    this.setState({ inputValue });
-  };
-
-  onFormSubmit = evt => {
-    evt.preventDefault();
-    const formValue = evt.target.elements.search.value;
-    if (this.state.inputValue.trim() === '') {
+  const onFormSubmit = e => {
+    e.preventDefault();
+    const formValue = e.target.elements.search.value;
+    if (inputValue.trim() === '') {
       return;
     }
 
-    this.props.onSubmit(formValue);
-    this.setState({ inputValue: '' });
+    onSubmit(formValue);
+    setInputValue('');
   };
 
-  render() {
-    const { inputValue } = this.state;
-    return (
-      <SearchbarHeader>
-        <SearchForm onSubmit={this.onFormSubmit}>
-          <SearchButton type="submit">
-            <SearchButtonLabel>Search</SearchButtonLabel>
-          </SearchButton>
+  return (
+    <SearchbarHeader>
+      <SearchForm onSubmit={onFormSubmit}>
+        <SearchButton type="submit">
+          <SearchButtonLabel>Search</SearchButtonLabel>
+        </SearchButton>
 
-          <SearchInput
-            value={inputValue}
-            onChange={this.onInputValue}
-            name="search"
-            type="text"
-            placeholder="Search images and photos"
-          />
-        </SearchForm>
-      </SearchbarHeader>
-    );
-  }
-}
-
-export { Searchbar };
+        <SearchInput
+          value={inputValue}
+          onChange={onInputValue}
+          name="search"
+          type="text"
+          placeholder="Search images and photos"
+        />
+      </SearchForm>
+    </SearchbarHeader>
+  );
+};
 
 Searchbar.propTypes = {
   onSubmit: PropTypes.func.isRequired,
